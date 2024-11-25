@@ -1,0 +1,1 @@
+# 6. Work with Data Warehouses Using Azure Synapse Analytics

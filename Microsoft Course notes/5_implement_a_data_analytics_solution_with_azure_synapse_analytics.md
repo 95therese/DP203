@@ -1,0 +1,1 @@
+# 5. Implement a Data Analytics Solution with Azure Synapse Analytics

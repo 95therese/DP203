@@ -1,0 +1,1 @@
+# 4. Transfer and Transform Data with Azure Synapse Analytics Pipelines

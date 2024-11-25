@@ -1,0 +1,1 @@
+# 2. Build Data Analytics Solutions Using Azure Synapse Serverless SQL Pools

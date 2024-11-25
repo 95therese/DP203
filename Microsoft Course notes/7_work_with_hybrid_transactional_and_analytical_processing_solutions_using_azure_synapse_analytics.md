@@ -1,0 +1,1 @@
+# 7. Work with Hybrid Transactional and Analytical Processing Solutions Using Azure Synapse Analytics
