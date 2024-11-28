@@ -58,3 +58,49 @@ The analytical data stores populated with data from the data engineering workloa
 
 
 
+## 1.2. Introduction to Azure Data Lake Storage Gen2
+
+Traditionally, organisations have built data warehouses and BI solutions based on relational database systems. But to be able to work with unstructured data, it's become common to work with data lakes instead.
+
+Data lakes store files, usually in a distributed file system that supports high scalability for massive volumes of data. Can store un/semi-/structured files in the data lake and then consume them from there in big data processing technologies, like Apache Spark.
+
+Azure Data Lake Storage Gen2 (ADLSG2) provides a cloud-based solution for data lake storage in Microsoft Azure, and underpins many large-scale analytics solutions built on Azure.
+
+### 1.2.1. Understand Azure Data Lake Storage Gen2
+
+Data lakes oftens store data in the form of blobs or files. ADLSG2 combines a file system with a storage platform. It builds on Azure Blob storage capabilities to optimise it specifically for analytics workloads. The integration enables analytics performance, the tiering and data lifecycle management capabilities of Blob storage, and the high-availability, security, and durability capabilities of Azure Storage.
+
+ADLSG2 is designed to deal with this variety and volume of data at exabyte scale while also securely handling hundreds of gigabytes of throughput. So ADLSG2 can be used for both real-time and batch solutions.
+
+**Benefits:**
+- Hadoop compatible access: can treat the data as if it's stored in a Hadoop Distributed File System. So can store the date in one place and access it rhough compute technologies like Azure Databricks, Azure HDInsight, and Azure Synapse Analytics without moving the data between environments. Can also use storage mechanisms like the parquet format.
+
+- Security: have support for access control lists (ACLs) and Portable Operating System Interface (POSIX) permissions that don't inherit the permissions of the parent directory. Can set permissions at directory level or file level. This security is configurable thorugh technologies like Hive and Spark or utilities like Azure Storage Explorer. All stored data is encrypted at rest using either Microsoft or customer-managed keys.
+
+- Performance: data is stored into a hierarchy of directories, like a file system, for easier navigation. Hence data processing requires less computational resources.
+
+- Data redundancy: ADLSG2 takes advantage of the Azure Blob replication models that provide data redundancy in a single data center with locally redundant storage (LRS) or to a secondary region with Geo-redundant storage (GRS).
+
+When planning for a data lake, the data engineer need to give consideration to structure, data governance and security. For example, need to think about:
+- Which type of data will be stored
+- How the data will be transformed
+- Who should access the data
+- What the typical access patterns are
+
+This approach helps with planning for access control governance across the lake. Data engineers also need to prevent the lake from becoming a data swamp, which can be done by establishing a baseline and making sure to follow best practices for ADLSG2.
+
+### 1.2.2 Enable Azure Data Lake Storage Gen2 in Azure Storage
+
+ADLSG2 isn't a standalone Azure service, but a configurable capability in Azure Storage.
+
+To enable ADLSG2 through the Azure portal when creating a storage account, select the option **Enable hierarchical namespace** in the **Advanced** tab.
+
+In an existing Azure Storage account, enable ADLSG2 by using the **Data Lake Gen2 upgrade** wizard.
+
+### 1.2.3. Compare Azure Data Lake Store to Azure Blob Storage
+
+Azure Blob storage stores blobs in a flat namespace within a blob container. Can organise the blobs into virtual folders, but they stored as as a single-level hierarchy. Can access the data with HTTP or HTTPS.
+
+ADLSG2 uses a hierachical namespace to organise blob data into directories as well as metadata about the directories and the files in them. This allows operations on the directories or the files to be done in a single operation, which can't be done with flat namespaces. Hierarchical namespaces keep the data organised, which gives better storage and retrieval performance for analytical uses and hence lowers the cost of analysis.
+
+Recommended to disable Hierarchical Namespace if you want to store data without performing analysis and enable it if you do want to do analytics. Blob storage can also be used to archive rarely used data or store website assets like images and media. Since ADLSG2 is integrated into the Azure Storage platform, applications can use either the Blob APIs or the ADLSG2 file system APIs to access the data.
