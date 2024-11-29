@@ -141,3 +141,67 @@ The module *Introduction to Azure Data Lake Storage Gen2* is not just part of th
 The first module, *Upload data to Azure Data Lake Storage*, consists of an exercise that demonstrate how to create an Azure Storage account with hierarchical namespace activated and an exercise introducing how to access and interact with an Azure Storage account via the Azure Storage Explorer, which can be installed locally on one's computer.
 
 The second module, *Secure your Azure Storage account*, explores how the the data in Azure Storage accounts is kept secure. It also mentions some security features of ADLSG2 and how they are integrated into analytics services that use the data in the data lake.
+
+## 1.3. Introduction to Azure Synapse Analytics
+
+> This module is also part of the *Implement a Data Analytics Solution with Azure Synapse Analytics* learning path, see section 5.1. The notes for this module will be contained here.
+
+### 1.3.1. What is Azure Synapse Analytics
+
+Four analytical techniques that are commonly used by organisations are as follows:
+
+- **Descriptive analytics:** 'What is happening?' This is typically answered by creating a data warehouse and store historical data for multidimensional modeling and reporting.
+
+- **Diagnostic analytics:** 'Why is it happening?' This involves exploring existing information in the data warehouse, but also involves a wider search of one's data estate to find more data to be able to perform this analysis.
+
+- **Predictive analysis:** 'What is likely to happen in the future based on previous trends and patterns?'
+
+- **Prescriptive analytics:** deciding what to do based on (near) real-time analysis, uses predictive analysis.
+
+Azure Synapse Analytics is a solution where one can perform all of these types of analyses. One can use skills from commonly used data technologies, like SQL and Apache Spark, but remaining in a centrally managed service with a single, consistent user interface.
+
+### 1.3.2. How Azure Synapse Analytics works
+
+Azure Synapse Analytics combines a centralised service for data storage and processing with an extensible architecture through which *linked services* allows one to integrate common data stores, processing platforms and visualisation tools.
+
+**Creating and using an Azure Synapse Analytics workspace**: A Synapse Analytics workspace defines an instance of the Synapse Analytics service where one can manage the services and data resources needed for our analytics solution. We can create a workspace in an Azure subscription using the Azure portal, the Azure PowerShell, the Azure CLI, or with an Azure Resource Manager or Bicep template.
+
+After creating a workspace, we interact with it using *Synapse Studio*, a web-based portal.
+
+**Working with files in a data lake**: A workspace usually has a defautl data lake, which is implemented as a linked service to an ADLSG2 container. We can add linked services for multiple data lakes that are based on different storage platforms as required.
+
+**Ingesting and transforming data with pipelines**: Data lakes or warehouses often contain data extracted from multiple sources. Azure Synapse Analytics has built-in support for creating, running, and managing pipelines that orchestrate the necessary activities for retrieving data from a range of sources, transforming the data as needed, and load the result into an analytical store. The pipelines are similar to the ones in Azure Data Factory, so experience with Data Factory is transferable to Synapse Analytics.
+
+**Querying and manipulating data with SQL**: Synapse Analytics supports SQL-based data querying and manipulation through two kinds of pools based on the SQL Server engine, namely a built-in *serverless* pool optimised for using relational SQL semantics and custom *dedicated* SQL pools that host relational data warehouses.
+
+Synapse Analytics can parallelise SQL operations, making it a highly scalable solution for relational data processing. You can use the built-in serverless pool for cost-effective analysis and processing of file data in the data lake, and use dedicatd SQL pools to create relational data warehouses.
+
+**Processing and analysing data with Apache Spark**: Apache Spark is an open source platform for big data analytics, and it supports several languages including Python, Scala, Java, SQL, and C#. In Synapse Analytics we can create one or more Spark pools and use interactive notebooks to build solutions for data analytics, machine learning, and data visualisation.
+
+**Exploring data with Data Explorer**: Azure Synapse Data Explorer is a data processing engine that uses Kusto Query Language (KQL) to get high performance, low-latency analysis of batch and streaming data.
+
+**Integrating with other Azure data services**: We can integrate Synapse Analytics with other Azure data services, including:
+
+- *Azure Synapse Link*: enables near real-time synchronisation between operational data in Azure Cosmos DB, Azure SQL Database, SQL Server, and Microsoft Power Platform Dataverse and analytical data storage that can be queried in Synapse Analytics.
+
+- *Microsoft Power BI*: data analysts can integrate a Power BI workspace into a Synapse workspace and to interactive data visualisation in Synapse Studio.
+
+- *Microsoft Purview*: organisations can catalogue data assets in Synapse Analytics, and makes it easier for data engineers to find data assets and track data lineage when implementing data pipelines that ingest data into Synapse Analytics.
+
+- *Azure Machine Learning*: data analysts and scientists can integrate predictive model training and consumption into analytical solutions.
+
+### 1.3.3. When to use Azure Synapse Analytics
+
+Common use cases for organisations and industries are identified by the need for:
+
+- **Large-scale data warehousing**: Data warehousing includes the need to integrate all data, including big data, to reason over data for analytics and reporting purposes from a descriptive analytics perspective, independent of its location or structure.
+
+- **Advanced analytics**: Organisations can do predictive analysis both with the native features of Synapse Analytics and by integrating with other technologies, like Azure Machine Learning.
+
+- **Data exploration and discovery**: Data analysts, engineers, and scientists can use the serverless SQL pool functionality to explore the data available. Can do data discovery, diagnostic analytics, and exloratory data analysis.
+
+- **Real time analytics**: Synapse Analytics can do (near) real-time data capture, storing, and analysis with features like Synapse Link or through the integration services like Stream Analytics and Data Explorer.
+
+- **Data integration**: Azure Synapse Pipelines allows you to ingest, prepare, model, and serve the data to be used by downstream systems. Can only be done by components of Synapse Analytics.
+
+- **Integrated analytics**: Synapse Analytics integrates the analytics landscape into one service, making it less complicated to build a cohesive service and freeing up time to work with the data.
