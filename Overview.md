@@ -8,5 +8,5 @@ Links to various resources:
 - [DP-203 | MSFTHUB](https://certs.msfthub.wiki/azure/dp-203/)
 
 Additional things to do:
-- Check out the documentations for [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction).
+- Check out the documentations for [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction), [Azure Synapse Analytics](https://learn.microsoft.com/en-us/azure/synapse-analytics/overview-what-is).
 - Check out the [lab exercises](https://github.com/MicrosoftLearning/dp-203-azure-data-engineer).
