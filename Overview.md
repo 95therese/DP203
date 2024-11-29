@@ -7,4 +7,6 @@ Links to various resources:
 - [I recently passed the DP-203, here are my notes to prepare](https://www.reddit.com/r/dataengineering/comments/16thbm7/i_recently_passed_the_dp203_here_are_my_notes_to/)
 - [DP-203 | MSFTHUB](https://certs.msfthub.wiki/azure/dp-203/)
 
-Update later as I get more into it...
+Additional things to do:
+- Check out the documentations for [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction).
+- Check out the [lab exercises](https://github.com/MicrosoftLearning/dp-203-azure-data-engineer).
