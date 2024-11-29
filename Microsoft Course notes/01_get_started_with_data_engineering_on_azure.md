@@ -62,7 +62,7 @@ The analytical data stores populated with data from the data engineering workloa
 
 Traditionally, organisations have built data warehouses and BI solutions based on relational database systems. But to be able to work with unstructured data, it's become common to work with data lakes instead.
 
-Data lakes store files, usually in a distributed file system that supports high scalability for massive volumes of data. Can store un/semi-/structured files in the data lake and then consume them from there in big data processing technologies, like Apache Spark.
+Data lakes provide file-based storage, usually in a distributed file system that supports high scalability for massive volumes of data. Can store un/semi-/structured files in the data lake and then consume them from there in big data processing technologies, like Apache Spark.
 
 Azure Data Lake Storage Gen2 (ADLSG2) provides a cloud-based solution for data lake storage in Microsoft Azure, and underpins many large-scale analytics solutions built on Azure.
 
@@ -87,7 +87,7 @@ When planning for a data lake, the data engineer need to give consideration to s
 - Who should access the data
 - What the typical access patterns are
 
-This approach helps with planning for access control governance across the lake. Data engineers also need to prevent the lake from becoming a data swamp, which can be done by establishing a baseline and making sure to follow best practices for ADLSG2.
+This approach helps with planning for access control governance across the lake. Data engineers also need to prevent the lake from becoming a data swamp, which can be ensured by establishing a baseline and making sure to follow best practices for ADLSG2.
 
 ### 1.2.2 Enable Azure Data Lake Storage Gen2 in Azure Storage
 
@@ -99,8 +99,37 @@ In an existing Azure Storage account, enable ADLSG2 by using the **Data Lake Gen
 
 ### 1.2.3. Compare Azure Data Lake Store to Azure Blob Storage
 
-Azure Blob storage stores blobs in a flat namespace within a blob container. Can organise the blobs into virtual folders, but they stored as as a single-level hierarchy. Can access the data with HTTP or HTTPS.
+Azure Blob storage stores blobs in a flat namespace within a blob container. Can organise the blobs into virtual folders, but they are stored as as a single-level hierarchy. Can access the data with HTTP or HTTPS.
 
 ADLSG2 uses a hierachical namespace to organise blob data into directories as well as metadata about the directories and the files in them. This allows operations on the directories or the files to be done in a single operation, which can't be done with flat namespaces. Hierarchical namespaces keep the data organised, which gives better storage and retrieval performance for analytical uses and hence lowers the cost of analysis.
 
 Recommended to disable Hierarchical Namespace if you want to store data without performing analysis and enable it if you do want to do analytics. Blob storage can also be used to archive rarely used data or store website assets like images and media. Since ADLSG2 is integrated into the Azure Storage platform, applications can use either the Blob APIs or the ADLSG2 file system APIs to access the data.
+
+### 1.2.4. Understand the stages for processing big data
+
+Data lakes has a role in many big data architechtures, and these architectures can involve the creation of, e.g. an enterprise data warehouse, advanced analytics against big data, or a real-time analytical solution.
+
+But there are four stages for processing big data solutions that all architectures have in common:
+- **Ingestion**: Identifying the technology and processes that are used to acquire the source data. The data can be in the form of foles, logs, and other unstructured data forms. The choice of technology will depend on the frequency of the data transfer. For example, pipelines in Azure Synapse Analytics or Azure Data Factory for batch processing, or Apache Kafka for HDInsight or Stream Analytics for real-time ingestion.
+
+- **Store**: Identifying where to place the ingested data. ADLSG2 is obviously a candidate for big data processing.
+
+- **Prep and train**: Identifying the technologies that are used for data preparation and model training and scoring for machine learning solutions. Common technologies include Azure Synapse Analytics, Azure Databricks, Azure HDInsight, and Azure Machine Learning.
+
+- **Model and serve**: Identifying the technologies that will present the data to users. These include visualisation tools like Microsoft Power BI and analytical data stores like Azure Synapse Analytics. Depending on business requirements, a combination may be used.
+
+### 1.2.5. Use Azure Data Lake Storage Gen2 in data analytics workloads
+
+Here are examples of how ADLSG2 can be used as part of analytical workloads:
+
+**Big data processing and analytics:** Big data scenarios are analytical workloads that involve massive *volumes* of data in a *variety* of formats that needs to be processed at a fast *velocity*, the "three v's". ADLSG2 provides a scalable and secure distributed data store on which big data services like Azure Synapse Analytics, Azure Databricks, and Azure HDInsight can apply data processing frameworks like Apache Spark, Hive, and Hadoop. We can perform tasks in parallel, resulting in high-performance and scalability even when working with massive amounts of data.
+
+**Data warehousing:** Data warehousing is an architecture and process involving the extraction of data and transforming it into structures suitable for analytical workloads. These days it involves large amounts of data stored as files in a data lake with relational tables in a data warehouse. Often the data is staged in a data lake to facilitate distributed processing before being loaded into a relational data warehouse. Sometimes the data warehouse uses external tables to define a relational metadata layer over files in the data lake, the result being a hybrid 'data lakehouse' or 'lake database' architecture. The data warehouse can then support analytical queries for reporting and visualisation.
+
+There are several ways to implement this kind of architecture. For example, Azure Synapse Analytics can host pipelines to do ETL processes with Azure Data Factory technology. The processes would extract the data from operational data sources and load it into a data lake in an ADLSG2 container, then the data is processed and loaded into a relational data warehouse in an Aure Synapse Analytics dedicated SQL pool, from where it can suppor data visualisation and reporting using Microsoft Power BI.
+
+**Real-time data analytics:** Streams of data can be generated continuously from, for example, IoT devices and social media platforms. These events are often captured in a queue for real-time processing. An example of a technology that can do this is Azure Event Hubs. The captured data is then processed, often to aggregate data over temporal windows. Azure Stream Analytics allows one to create jobs that query and aggregate event data as it arrives, and write the results to an output sink. ADLSG2 can serve as such a sink.
+
+**Data science and machine learning:** Data science involves analysing large volumes of data, often using tools like Apache Spark and Python. ADLSG2 can store the massive amounts of data required in data science workloads.
+
+Machine learning is a subarea of data science that deals with training predictive models. This model training requires a lot of data and the ability to process the data efficiently. Azure Machine Learning can run Python code in notebooks, and the data stored in ADLSG2 containers can be processed to train models, which can then be deployed as production web services to support predictive analytical workloads.
