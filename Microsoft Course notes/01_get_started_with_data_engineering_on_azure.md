@@ -133,3 +133,11 @@ There are several ways to implement this kind of architecture. For example, Azur
 **Data science and machine learning:** Data science involves analysing large volumes of data, often using tools like Apache Spark and Python. ADLSG2 can store the massive amounts of data required in data science workloads.
 
 Machine learning is a subarea of data science that deals with training predictive models. This model training requires a lot of data and the ability to process the data efficiently. Azure Machine Learning can run Python code in notebooks, and the data stored in ADLSG2 containers can be processed to train models, which can then be deployed as production web services to support predictive analytical workloads.
+
+### 1.2.6. Bonus: More on ADLSG2
+
+The module *Introduction to Azure Data Lake Storage Gen2* is not just part of the DP 203 course, but also the learning path [*Large-Scale Data Processing with Azure Data Lake Storage Gen2*](https://learn.microsoft.com/en-gb/training/paths/data-processing-with-azure-adls/). This learning path has two additional modules that further explore ADLSG2.
+
+The first module, *Upload data to Azure Data Lake Storage*, consists of an exercise that demonstrate how to create an Azure Storage account with hierarchical namespace activated and an exercise introducing how to access and interact with an Azure Storage account via the Azure Storage Explorer, which can be installed locally on one's computer.
+
+The second module, *Secure your Azure Storage account*, explores how the the data in Azure Storage accounts is kept secure. It also mentions some security features of ADLSG2 and how they are integrated into analytics services that use the data in the data lake.
