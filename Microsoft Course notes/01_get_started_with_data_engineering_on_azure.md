@@ -138,7 +138,7 @@ Machine learning is a subarea of data science that deals with training predictiv
 
 The module *Introduction to Azure Data Lake Storage Gen2* is not just part of the DP 203 course, but also the learning path [*Large-Scale Data Processing with Azure Data Lake Storage Gen2*](https://learn.microsoft.com/en-gb/training/paths/data-processing-with-azure-adls/). This learning path has two additional modules that further explore ADLSG2.
 
-The first module, *Upload data to Azure Data Lake Storage*, consists of an exercise that demonstrate how to create an Azure Storage account with hierarchical namespace activated and an exercise introducing how to access and interact with an Azure Storage account via the Azure Storage Explorer, which can be installed locally on one's computer.
+The first of the additional modules, *Upload data to Azure Data Lake Storage*, consists of an exercise that demonstrate how to create an Azure Storage account with hierarchical namespace activated and an exercise introducing how to access and interact with an Azure Storage account via the Azure Storage Explorer, which can be installed locally on one's computer.
 
 The second module, *Secure your Azure Storage account*, explores how the the data in Azure Storage accounts is kept secure. It also mentions some security features of ADLSG2 and how they are integrated into analytics services that use the data in the data lake.
 
