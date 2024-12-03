@@ -6,7 +6,7 @@ As prerequisites for this learning path, Microsoft says to consider completing t
 
 > Note to self: update when this section is done how necessary/useful the T-SQL path is.
 
-## 2.1. Use Azure Synapse serverless SQL pool to Query files in a data lake
+## 2.1. Use Azure Synapse serverless SQL pool to query files in a data lake
 
 > This module is also part of the *Implement a Data Analytics Solution with Azure Synapse Analytics* learning path, see section 5.2. The notes for this module will be contained here.
 
@@ -36,3 +36,6 @@ Common use cases for serverless SQL pools:
 - **Data exploration:** browsing the data lake for initial insights, can be done with Azure Synapse Studio. Can use serverless SQL pool to automatically generate SQL scripts for selecting TOP 100 rows from a file or folder. Can then apply common operations like projections, filtering, grouping, etc.
 - **Data transformation:** serverless SQL pool can do SQL-based data transformation, both interactively or as part of an automated data pipeline.
 - **Logical data warehouse:** can define external objects like tables and views in a serverless SQL database. The data is still stored in the data lake files, but they are also abstractedd by a relational schema that allows client applications and analytical tools to query the data is if they were in a relational database in SQL Server.
+
+### 2.1.2. Query files using a serverless SQL
+
