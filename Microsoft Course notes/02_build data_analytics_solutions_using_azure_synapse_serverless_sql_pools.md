@@ -301,3 +301,60 @@ DROP EXETERNAL TABLE SpecialOrders;
 
 but note that external tables are merly a metadata abstraction over the files that contains the actual data. So dropping an external table does *not* delete the underlying files.
 
+### 2.2.2. Encapsulate data transformations in a stored procedure
+
+It's considered good practice to encapsulate transformation operations like CETAS statements in stored procedures. It makes it easier to operationalise data transformations by enabling us to supply parameters, retrieve outputs, and include additional logic in a single procedure call.
+
+Here's an example that creates a stored procedure that drops the external table if it already exists before recreating it with order data for the specified year:
+
+``` SQL
+CREATE PROCEDURE usp_special_orders_by_year @order_year INT
+AS
+BEGIN
+
+	-- Drop the table if it already exists
+	IF EXISTS (
+                SELECT * FROM sys.external_tables
+                WHERE name = 'SpecialOrders'
+            )
+        DROP EXTERNAL TABLE SpecialOrders
+
+	-- Create external table with special orders
+	-- from the specified year
+	CREATE EXTERNAL TABLE SpecialOrders
+		WITH (
+			LOCATION = 'special_orders/',
+			DATA_SOURCE = files,
+			FILE_FORMAT = ParquetFormat
+		)
+	AS
+	SELECT OrderID, CustomerName, OrderTotal
+	FROM
+		OPENROWSET(
+			BULK 'sales_orders/*.csv',
+			DATA_SOURCE = 'files',
+			FORMAT = 'CSV',
+			PARSER_VERSION = '2.0',
+			HEADER_ROW = TRUE
+		) AS source_data
+	WHERE OrderType = 'Special Order'
+	AND YEAR(OrderDate) = @order_year
+END
+```
+
+Other benefits of stored procedures:
+
+- Reduces client to server network traffic: the commands in a procedure are executed as a single batch of code, so we only need to send a call to execute the procedure across the network.
+- Provides a security boundary: users and client programs without direct permissions to access a database can still do operations via a procedure. The procedure controls what activities are performed and protects the underlying database objects, so we don't need to manage permissions at the individual object level which simplifies the security layers.
+- Eases maintenance: changes in the logic or file system locations involved in the data transformation can be applied only to the stored procedure. No need to update client applications or other calling functions.
+- Imporved performance: stored procedures are compiled the first time they're executed, and the resulting execution plan is held in the cache and reused on later runs of the same procedure, resulting in it taking less time to process the procedure.
+
+### 2.2.3. Include a data transformation stored procedure in a pipeline
+
+We might keep a CETAS in a stored procedure to make it easier to perform data transformations repeatedly. Then in Azure Synapse Analytics and Azure Data Factory, we can create pipelines that connect to linked services, like ADLSG2 storage accounts that host data lake files, and serverless SQL pools. Thus we can call our stored procedures as part of an overall ETL pipeline.
+
+For example, we could create a pipeline that includes:
+- A **Delete** activity that deletes the target folder for the transformed data if it already exists
+- A **Stored procedure** activity that connects to our serverless SQL pool and runs the stored procedure that encapsulates our CETAS operation
+
+We can also use pipelines to schedule the operation to run at specific times or based on specific events (e.g. new files being added to the source storage location). More information about the **Stored procedure** activity in a pipeline is found in the documentation for Azure Data Factory.
