@@ -2,9 +2,8 @@
 
 As prerequisites for this learning path, Microsoft says to consider completing the following learning paths:
 - [Explore data analytics in Azure](https://learn.microsoft.com/en-us/training/paths/azure-data-fundamentals-explore-data-warehouse-analytics/?azure-portal=true), which is part of the DP-900 syllabus. So if you've done DP-900, you've likely already done this.
-- [Get Started Querying with Transact-SQL](https://learn.microsoft.com/en-us/training/paths/get-started-querying-with-transact-sql/). Something to consider if you're new to T-SQL (or to SQL in general), or if you want some practice with T-SQL. It's a bit long, though
-
-> Note to self: update when this section is done how necessary/useful the T-SQL path is.
+- [Get Started Querying with Transact-SQL](https://learn.microsoft.com/en-us/training/paths/get-started-querying-with-transact-sql/). 
+The full learning path is a bit long, but I'd say it's worth considering doing it (or just parts of it) if you're new to T-SQL (or SQL in general) or if you'd like some practice with it. You don't need to be able to write T-SQL queries independently in the following, but T-SQL does show up so you should definitely be able to understand it. (If you're doing DP-203 in the first place, you're probably going to work with T-SQL in the future at some point, so long term you should obviously learn how to work with it independently)
 
 > Important note: as of writing this (04/12/24), there's a wrong link in the official Microsoft course. In the module that corresponds to section 2.2.2, the link to the lab sends you to the 2.2.3 lab. The correct link is [here](https://microsoftlearning.github.io/dp-203-azure-data-engineer/Instructions/Labs/02-Analyze-data-with-sql.html).
 
