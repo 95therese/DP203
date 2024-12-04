@@ -232,3 +232,72 @@ SELECT * FROM dbo.products;
 ```
 
 By creating a database that contains the external objects discussed here, we provide a relational database layer over files in a data lake. This makes it easier for data analysts and reporting tools to access the data with standard SQL query semantics.
+
+
+## 2.2. Use Azure Synapse serverless SQL pools to transform data in a data lake
+
+While data analysts commonly use SQL to query data, data engineers often use SQL to transform data, often as part of a data ingestion pipeline or an ETL process.
+
+### 2.2.1. Transform data files with the CREATE EXTERNAL TABLE AS SELECT statement
+
+SQL has many features for manipulating data, for example for filetering rows and columns, renaming data, converting between data types, calculated derived data fields, manipulate strings, and grouping and aggregating data.
+
+With serverless SQL, we can store the result of SELECT statements in a selected file format with a metadata table schema that can be queried with SQL. A CREATE EXTERNAL TABLE AS SELECT (CETAS) statement that contains a SELECT statement for querying and manipulating data from any valid data source, and the results of the query are persisted in an external table.
+
+Using CETAS statements, we can use SQL for ETL processing of data before sending downstream for further processing or analysis. Subsequent operations on the transformed data can then be performed both against the relational table in the SQL pool database or directly against the underlying data files.
+
+**Creating external database objects to support CETAS:** To use CETAS expressions, we need to first create an external data source and an external file format. When using a serverless SQL pool, these objects should be created in a custom database, not in the built-in database. See section 2.1.3 above for more on creating external objects.
+
+**Using the CETAS statement:** After creating the external objects, we can use the CETAS statement to transform data and store the results in an external table.
+
+For example, say we've created some external objects:
+
+``` SQL
+CREATE EXTERNAL DATA SOURCE files
+WITH (
+    LOCATION = 'https://mydatalake.blob.core.windows.net/data/files/',
+    TYPE = BLOB_STORAGE,
+    CREDENTIAL = storageCred
+);
+
+CREATE EXTERNAL FILE FORMAT ParquetFormat
+WITH (
+    FORMAT_TYPE = PARQUET,
+    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'
+);
+```
+
+Say we want to transform some source data that consists of sales orders in .csv files in a folder in a data lake. We want to filter the data to include only orders marked as 'special order', and save the results as Parquet files in a different folder in the same data lake. We can use the same external data source for the source and destination folders. So the code for accomplishing all this can look like:
+
+``` SQL
+CREATE EXTERNAL TABLE SpecialOrders
+    WITH (
+        LOCATION = 'special_orders/',
+        DATA_SOURCE = files,
+        FILE_FORMAT = ParquetFormat
+    )
+AS
+SELECT OrderID, CustomerName, OrderTotal
+FROM
+    OPENROWSET(
+        BULK 'sales_orders/*.csv',
+        DATA_SOURCE = 'files',
+        FORMAT = 'CSV',
+        PARSER_VERSION = '2.0',
+        HEADER_ROW = TRUE
+    ) AS source_data
+WHERE OrderType = 'Special Order';
+```
+
+Note that the relative file paths in LOCATION and BULK are relative to the file path referenced by *files*.
+
+It's important to not that we have to use an external data source to specify where transformed data for the external table should be saved. But the source data can come from somewhere else, either from a different data source or a fully qualified path. For example, in the above code we could remove the DATA_SOURCE line in OPENROWSET and replace the string following BULK with something like `'https://mystorage.blob.core.windows.net/data/sales_orders/*.csv'`.
+
+**Dropping external tables:** If we no longer need the external table with the transformed data, we can drop it from the database.
+
+``` SQL
+DROP EXETERNAL TABLE SpecialOrders;
+```
+
+but note that external tables are merly a metadata abstraction over the files that contains the actual data. So dropping an external table does *not* delete the underlying files.
+
