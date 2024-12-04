@@ -424,3 +424,87 @@ And to query the table:
 %%sql
 SELECT * FROM 'RetailDB'.'Customer' WHERE CustomerID = 123
 ```
+
+
+## 2.4. Secure data and manage users in Azure Synapse serverless SQL pools
+
+### 2.4.1. Choose an authentication method in Azure Synapse serverless SQL pools
+
+Serverless SQL pool authentication refers to how users prove their identity when connecting to the endpoint. There are two types of supported authentication:
+- SQL Authentication: username and password
+- Microsoft Entra authentification: identities manages by Microsoft Entra ID. Can enable multi-factor authentication. Should use Active Directory authentication (integrated security) whenever possible.
+
+**Authorisation:** This refers to what a user can do within a serverless SQL pool database and is controlled by your user account's database role memberships and object-level permissions.
+
+With SQL Authentication, the SQL user exists only in the serverless SQL and permissions are scoped to the objects in the serverless SQL pool. Access to securable objects in other services (e.g. Azure Storage) can't be granted. The SQL user needs to get authorisation to access the files in the storage account.
+
+With Microsoft Entra authentication, a user can sign in to a serverless SQL pool and other services, and one can grant permissions to the Microsoft Entra user.
+
+**Access to storage accounts:** When logged into the serverless SQL pool service, a user must be authorised to access and query the files in Azure Storage. Serverless SQL pool has the following authorisation types:
+- Anonymous access: allows anonymous access to publicly available files on Azure storage accounts, i.e. no logging in, anyone has access.
+- Shared access signature (SAS): Provides delegated access to resources in storage accounts. With a SAS, can grant clients access to resources without sharing account keys. A SAS gives you granular control over the type of access you grant to clients who have the SAS.
+- Managed Identity: A feature of Microsoft Entra ID that provides Azure services for for serverless SQL pool. It deploys an automatically managed identity in Microsoft Entra ID which be used to authorise the request for data access in Azure Storage. The Azure Storage administrator grants permissions to Managed Identiy and this is done in the same way as granting permissions to any other Microsoft Entra user.
+- User Identity: aka 'pass-through', an authorisation type where the identity of the Microsoft Entra user that logged into the serverless SQL pool is used to authorise access to the data. So the Azure Storage administrator must again grant permissions to the Microsoft Entra user before the data can be accessed. This authorisation type uses the Microsoft Entra user that logged into serverless SQL pool, hence it's not supported for SQL user types.
+
+### 2.4.2. Manage users in Azure Synapse serverless SQL pools
+
+Can give administrator privileges in the Azure Synapse workspace. Pick Manage > Access control > Add > Synapse Administrator > Select a user or security group > Apply.
+
+### 2.4.3. Manage user permissions in Azure Synapse serverless SQL pools
+
+To secure data, Azure Storage implements an access control model that supports both Azure role-based access control (Azure RBAC) and access control lists (ACLs) like Portable Operating System Interface for Unix (POSIX).
+
+We can associate a security principal with an access level for files and directories. These associations are captured in an access control list (ACL).  These associations are captured in an ACL. Each file and directory in your storage account has an ACL. When a security principal attempts an operation on a file or directory, an ACL check determines whether that security principal (user, group, service principal, or managed identity) has the correct permission level to perform the operation.
+
+There are two kinds of ACLs:
+- **Access ACLs**: Controls access to an object. Files and directories both have access ACLs.
+- **Default ACLs**: Templates of ACLs associated with a directory that determine the access ACLs for any child items that are created under that directory. Files do no hav edefault ACLs.
+
+Both types have the same structure. And permissions on files and directories are as follows:
+
+| Permission | File                                           | Directory                                                       |
+|    ---     | ---                                            |   ---                                                           |
+| Read(R)    | Can read the contents of a file                | Requires Read and Execute to list the contents of the directory |
+| Write (W)  | Can write or append to a file                  | Requires Write and Execute to create child items in a directory |
+| Execute (E)| Does not mean anything in the context of DLSG2 | Required to traverse the child items of a directory             |
+
+**Guidelines in setting up ACLs:** Always use Microsoft Entra security groups as the assigned principal in an ACL entry. It allows you to add and remove users or service principals without the need to reapply ACLs to an entire directory structure. Instead just add or remove users and service principals from the appropriate Microsoft Entra security group.
+
+There are many ways to set up groups. For example, if we have a directory **/LogData** holding log data generated by our server. Azure Data Factory ingests data into that folder, specific users from the service engineering team will upload logs and manage other users of this folder, and various Databricks clusters will analyse logs from that folder.
+
+To enable these activities, we can create a LogsWriter group and a LogsReader group. Then assign permissions as follows:
+- Add LogsWriter to the ACL of **/LogData** with rwx permissions
+- Add LogsReader to the ACL of **/LogData** with r-x permissions
+- Add the service principal objet or Managed Service Identity (MSI) for ADF to LogsWriters
+- Add the service engineering team users to the LogsWriter group
+- Add the service principal object or MSI for Databricks to LogsReader
+
+If a user from the service engineering team leaves the company, we just remove them from the LogsWriter group. If there was a dedicated ACL entry for that user, you'd have to remove that ACL entry from **/LogData** and remove the entry from all subdirectories files in the whole directory hierarchy of **/LogData**.
+
+**Roles necessary for serverless SQL pool users:** Users that need read only access shouls be assigned the rol **Storage Blob Data Reader**. Users that need read/write access should be assigned the role **Storage Blob Data Contributor**. Note that read/write access is needed we the user needs to do CETAS operations.
+
+Note that it's not enough if a user has a role of Owner or Contributor, as ADLSG2 has super-roles which should be assigned.
+
+**Database level permission:** To provide more granular access to the user, we can use T-SQL syntax to create logins and users. For example, to grant a user access to a single serverless SQL pool database, you can do the following:
+
+``` SQL
+-- Create LOGIN
+use master
+CREATE Login [alias@domain.com] FROM EXTERNAL PROVIDER;
+
+--Create USER
+use yourdb
+CREATE USER alias FROM LOGIN [alias@domain.com];
+
+--Add USER to members of the specified role
+use yourdb
+alter role db_datareader
+Add member alias --use the username from the previous step
+```
+
+**Server level permission:** To grant full access to a user to all serverless SQL pool databases, do the following:
+
+``` SQL
+CREATE LOGIN [alias@omain.com] FROM EXTERNAL PROVIDERS;
+ALTER SERVER ROLE sysadmin ADD MEMBER [alias@domain.com];
+```
