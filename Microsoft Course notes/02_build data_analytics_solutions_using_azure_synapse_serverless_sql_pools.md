@@ -6,6 +6,8 @@ As prerequisites for this learning path, Microsoft says to consider completing t
 
 > Note to self: update when this section is done how necessary/useful the T-SQL path is.
 
+> Important note: as of writing this (04/12/24), there's a wrong link in the official Microsoft course. In the module that corresponds to section 2.2.2, the link to the lab sends you to the 2.2.3 lab. The correct link is [here](https://microsoftlearning.github.io/dp-203-azure-data-engineer/Instructions/Labs/02-Analyze-data-with-sql.html).
+
 ## 2.1. Use Azure Synapse serverless SQL pool to query files in a data lake
 
 > This module is also part of the *Implement a Data Analytics Solution with Azure Synapse Analytics* learning path, see section 5.2. The notes for this module will be contained here.
