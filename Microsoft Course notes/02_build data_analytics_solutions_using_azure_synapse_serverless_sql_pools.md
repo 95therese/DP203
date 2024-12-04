@@ -360,3 +360,67 @@ For example, we could create a pipeline that includes:
 - A **Stored procedure** activity that connects to our serverless SQL pool and runs the stored procedure that encapsulates our CETAS operation
 
 We can also use pipelines to schedule the operation to run at specific times or based on specific events (e.g. new files being added to the source storage location). More information about the **Stored procedure** activity in a pipeline is found in the documentation for Azure Data Factory.
+
+
+## 2.3. Create a lake database in Azure Synapse Analytics
+
+Lake databases combine the approaches and benefits of storing data in data lakes vs in relational databases.
+
+### 2.3.1. Understand lake database concepts
+
+In traditional relational databases, the structure is very strict. We have tables, views, and other objects. Tables define entities, entities have attributes (columns), and attributes have names and data types. The data is stored in the database, and there is enforcement of data types, nullability, key uniqueness, and referential integrity between related keys. Queries and data manipulations must be done through the database system.
+
+A data lake doesn't have a fixed schema and stores un/semi-/structured data in files. Applications and analysts work directly with the files in the data lake, with the tools of their choice.
+
+A lake database is a data lake with a relational metadata layer over one or more files. We can create a lake database that has definitions for tables, with column names and datatypes and relationships between primary and foreign key columns. The tables reference files in the data lake, so we can use relational semantics to query the data. But the storage of the date is decoupled from the batabase schema, making this structure more flexible that a traditional relational database system.
+
+**Lake database schema:** we can create lake databases in Synapse Analytics and define tables that represent the entities for which we want to store data. We can apply datamodeling principles to create relatioships between tables and use appropriate naming conventions for tables, columns, and other database objects. Synapse Analytics has graphical design interface we can use to model the database schema.
+
+**Lake database storage:** the data for the tables in the lake database is stored as Parquet or CSV files in the data lake. The files can be managed independently of the database tables, making it easier to manage data ingestion and manipulation.
+
+**Lake database compute:** we can query and manipulate the date through the tables we've defined. We can do SQL queries with a serverless SQL pool and we can work with the tables with an Azure Synapse Apache Spark pool, using the Spark SQL API.
+
+### 2.3.2. Explore database templates
+
+We can create a Lake database from an empty schema, but Synapse Analytics also has a comprehensive collection of templates reflecting common schemas in a variety of business scenarios, like agriculture, banking, freight and logistics, healthcare insurance, retail, and much more. We can optionally use such a template as a starting point for a lake database or start with a blank schema and add and modify tables from the templates.
+
+### 2.3.3. Create a lake database
+
+We create a lake database with the lake database designer in Synapse Studio. We add a new lake database on the **Data** page, select a template from the gallery or start with blank lake daabase, and then add and customise tables with the visual database designer interface.
+
+As we create tables, we can specify the type and location of the files we want to use to store the underlying data, or we can create a table from existing files already in the data lake. Usually it's advisable to store all the database files in a consistent format within the same root folder in the data lake.
+
+The database designer interface has a drag-and-drop surface where we can edit the tables in the database and the relationships between them. We can define the schema for the database by adding/removing tables, specifying the name and storage settings for each table, specifying the names, key usage, nullability, and data types for each column, and defining relationships between key columns in tables.
+
+When the schema is ready to use, you publish the database and start using it.
+
+### 2.3.4. Use a lake database
+
+After creating a lake database, we can store data files mathcing the table schemas in the appropriate folders in the data lake, and then query them using SQL.
+
+**Using a serverless SQL pool:** For example, say a lake database named **RetailDB** has a **Customer** table. We can query it like this:
+
+``` SQL
+USE RetailDB;
+GO;
+
+SELECT CustomerID, FirstName, LastName
+FROM Customer
+ORDER BY LastName;
+```
+
+Note that we don't need to use OPENROWSET or any additional code to access the data from the underlying file storage.
+
+**Using an Apache Spark pool:** In addition to serverless SQL pool, we can work with lake database tables using Spark SQL in an Apache Spark pool. For example, to insert a new customer record into the **Customer** table, we run:
+
+``` SQL
+%%sql
+INSERT INTO 'RetailDB'.'Customer' VALUES (123, 'John', 'Yang')
+```
+
+And to query the table:
+
+``` SQL
+%%sql
+SELECT * FROM 'RetailDB'.'Customer' WHERE CustomerID = 123
+```
