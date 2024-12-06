@@ -120,7 +120,7 @@ bikes_df = df.select("ProductName","ListPrice").where((df["Category"]=="Mountain
 We also have functions for grouping and aggregating data, for example:
 
 ``` Python
-couns_df = df.select("ProductID","Category").groupBy("Category").count()
+counts_df = df.select("ProductID","Category").groupBy("Category").count()
 ```
 
 **Using SQL expressions in Spark:** The Dataframe API is part of the Spark SQL library, so we have ways of using SQL in Spark to work with the data.
@@ -164,7 +164,7 @@ This is useful when the results of a query doesn't include any existing grouping
 
 **Using graphics packages in code:** There are many graphics packages that can do data visualisation. Notably, Python supports many packages, most of them built on the **Matplotlib** library. The output can be rendered in a notebook, making it easy to work with the data with inline data visualisations and then use markdown cells for providing commentary.
 
-For example, some PySpark code that creates a chart from some aggregated with Matplotlib can look like this:
+For example, some PySpark code that creates a chart from some aggregated data with Matplotlib can look like this:
 
 ``` Python
 from matplotlib import pyplot as plt
