@@ -2,6 +2,8 @@
 
 ## 3.1. Analyse data with Apache Spark in Azure Synapse Analytics
 
+> This module is also part of the *Implement a Data Analytics Solution with Azure Synapse Analytics* learning path, see section 5.3. The notes for this module will be contained here.
+
 Apache Spark is an open source parallel processing framework for large-scale data processing and analytics. It's very popular in big data scenarios and is available in multiple platform implementations, indlucing Azure HDInsight, Databricks, and Synapse Analytics. Here we explore how to use Spark in Synapse Analytics for ingestion, processing, and analysis of data from a data lake. The core techniques and code here are commin to all Spark implementations.
 
 ### 3.1.1. Get to know Apache Spark
@@ -316,6 +318,8 @@ DROP TABLE sales_orders;
 ```
 
 ## 3.3. Use Delta Lake in Azure Synapse Analytics
+
+> This module is also part of the *Implement a Data Analytics Solution with Azure Synapse Analytics* learning path, see section 5.4. The notes for this module will be contained here.
 
 Delta Lake enables relational database capabilities for batch streaming data and allows implementing a data lakehouse architecture in Spark. The version of Delta Lake available in a Synapse Analytics pool depends on the verison of Spark specified in the pool configuration. The information here reflects Delta Lake version 1.0, which is installed in Spark 3.1.
 

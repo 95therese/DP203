@@ -8,5 +8,6 @@ Links to various resources:
 - [DP-203 | MSFTHUB](https://certs.msfthub.wiki/azure/dp-203/)
 
 Additional things to do:
-- Check out the documentations for [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction), [Azure Synapse Analytics](https://learn.microsoft.com/en-us/azure/synapse-analytics/), [Azure Data Factory](https://learn.microsoft.com/en-us/azure/data-factory/), [Spark SQL and DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
+- Check out the documentations for [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction), [Azure Synapse Analytics](https://learn.microsoft.com/en-us/azure/synapse-analytics/), [Azure Data Factory](https://learn.microsoft.com/en-us/azure/data-factory/), [Delta Lake API](https://docs.delta.io/latest/delta-apidoc.html).
+- Check out guides for [Spark SQL and DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html), [Structured Streaming Programming](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html).
 - Check out the [lab exercises](https://github.com/MicrosoftLearning/dp-203-azure-data-engineer).
