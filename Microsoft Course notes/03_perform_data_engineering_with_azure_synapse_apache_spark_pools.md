@@ -196,3 +196,121 @@ plt.show()
 ```
 
 Note that Matplotlib requires the data to be in a Pandas dataframe rather than a Spark dataframe, so we need the **toPandas** method. We have other libraries that can create charts, for example **Seaborn**.
+
+
+## 3.2. Transform data with Spark in Azure Synapse Analytics
+
+Spark can be used not just for analytics, but also for transforming large amounts of data. With the Spark dataframe, we can load data from a data lake and do complex modifications, then we can save the result back to the lake for downstream processing or ingestion into a data warehouse.
+
+Synapse Analytics provides Apache Spark pools where we can run Spark workloads and use natively supported notebooks to write and run Spark code. Can then use other Synapse Analytics tools, like SQL pools, to work with the transformed data.
+
+### 3.2.1. Modify and save dataframes
+
+Recall that we load data into a dataframe with the **spark.read** function, where we specify the file format, file path, and optionally further options, for example:
+
+``` Python
+order_details = spark.read.csv('/orders/*.csv', header=True, inferSchema=True)
+display(order_details.limit(5))
+```
+
+**Transform the data structure:** Once the data is loaded into a dataframe, some common operations we can do on it include filtering rows and columns, renaming columns, creating new columns (often derived from existing ones), and replacing null or other values.
+
+For example, to modify how we handle the customer's name:
+
+``` Python
+from pyspark.sql.functions import split, col
+
+# Create the new FirstName and LastName fields
+transformed_df = order_details.withColumn("FirstName", split(col("CustomerName"), " ").getItem(0)).withColumn("LastName", split(col("CustomerName", " ").getItem(1)))
+
+# Remove the CustomerName field
+transformed_df = transformed_df.drop("CustomerName")
+
+display(transformed_df.limit(5))
+```
+
+**Save the transformed data:** When we're done transforming some data, we can save the result to a supported format in the data lake. For example, to save the dataframe to a parquet file and replace any existing files with the same name:
+
+```Python
+transformed_df.write.mode("overwrite").parquet('/transformed_data/orders.parquet')
+print("Transformed data saved!")
+```
+
+The Parquet format is good for data files that will be used for further analysis or ingestion into an analytical store. It's an efficient format supported by most large scale data analytics systems. In fact, sometimes the data transformation requirement can be to just convert data from a format (e.g. CSV) into Parquet.
+
+### 3.2.2. Partition data files
+
+Partitioning is an optimisation technique that enables spark to maximise performance across the worker nodes. More performance gains can be achieved when filtering data in queries by eliminating unnecessary disk IO.
+
+**Partition to the output file:** To save a dataframe as a set of files, we use the **partitionBy** method and we pick a column whose values determine which partition each row is stored in. Example:
+
+``` Python
+from pyspark.sql.functions import year, col
+
+# Load source data
+df = spark.read.csv('/orders/*.csv', header=True, inferSchema=True)
+
+# Add Year column
+dated_df = df.withColumn("Year", year(col("OrderDate")))
+
+# Partition by year
+dated_df.write.partitionBy("Year").mode("overwrite").parquet("/data")
+```
+
+The generated folder names will include the column name and the value in the **column=value** format. For example, the folder containing the files with *Year* value *2020* will be named *Year=2020*.
+
+We have the option of partitioning data by multiple columns, which creates a hierarchy of folders. So could, for example, partition by year and month.
+
+**Filter parquet files in a query:** When reading data from parquet files, we can pull data from any folder within the hierarchical folders. For example:
+
+``` Python
+orders_2020 = spark.read.parquet('/partitioned_data/Year=2020')
+display(orders_2020.limit(5))
+```
+
+The partition columns specified in the file path will be omitted in the resulting dataframe. In this example, if the *Year* column was included, all the rows would have value *2020*.
+
+### 3.2.3. Transform data with SQL
+
+We can also query and transform data in dataframes with SQL queries and persist the results as tables. By tables here, we mean the metadata abstraction over the files in the data lake, not an actual relational talbe.
+
+**Define tables and views:** Table definitions in Spark are stored in the *metastore*. And *external* tables are relational tables in the metastore that reference files in a data lake location that we specify. We access the data by querying the table or by reading the files directly from the data lake.
+
+External tables are loosely bound to the underlying files, so deleting a table does not delete the associated files. This means we can use Spark for transforming and persisting data, then delete the table while downstream processes still can access the transformed data.
+
+We can also define *managed* tables for which the underlying data files are stored in an internally managed storage location with the metastore. Managed tables are tightly-bound to the files, so dropping a managed table will delete the associated files.
+
+Example where a dataframe is saved as an external table:
+
+``` Python
+order_details.write.saveAsTable('sales_orders', format='parquet', mode='overwrite', path='/sales_ordesr_table')
+```
+
+**Use SQL to query and transform the data:** After a table is created , we can use SQL to query and transform the data:
+
+``` Python
+# Create derived columns
+sql_transform = spark.sql("SELECT *, YEAR(OrderDate) AS Year, MONTH(OrderDate) AS Month FROM sales_orders")
+
+# Save the results
+sql_transform.write.partitionBy("Year","Month").saveAsTable('transformed_orders', format='parquet', mode='overwrite', path='/transformed_orders_table')
+```
+
+**Query the metastore:** As the table is created in the metastore, we can use SQL directly in the notebook with the **%%sql** magic key, for example:
+
+``` SQL
+%%sql
+
+SELECT * FROM transformed_orders
+WHERE Year = 2021
+    AND Month = 1
+```
+
+**Drop tables:** We can use the **DROP** command to drop external tables without affecting the files in the data lake.
+
+``` SQL
+%%sql
+
+DROP TABLE transformed_orders;
+DROP TABLE sales_orders;
+```
