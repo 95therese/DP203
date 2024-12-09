@@ -15,3 +15,9 @@
 ## 5.4. Use Delta Lake in Azure Synapse Analytics
 
 > This module is also part of the *Perform data engineering with Azure Synapse Apache Spark Pools* learning path. The notes for this module are stored with the notes for that learning path, i.e. they are in section 3.3.
+
+## 5.5. 
+
+## 5.6. Build a data pipeline in Azure Synapse Analytics
+
+> This module is also part of the *Transfer and transform data with Azure Synapse Analytics pipelines* learning path. The notes for this module are stored with the notes for that learning path, i.e. they are in section 4.1.
