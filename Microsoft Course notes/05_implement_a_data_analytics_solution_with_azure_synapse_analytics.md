@@ -16,7 +16,11 @@
 
 > This module is also part of the *Perform data engineering with Azure Synapse Apache Spark Pools* learning path. The notes for this module are stored with the notes for that learning path, i.e. they are in section 3.3.
 
-## 5.5. 
+## 5.5. Analyse data in a relational data warehouse
+
+> This module is also part of the *Work with Data Warehouses using Azure Synapse Analytics* learning path, see section 6.1. The notes for this module will be contained here.
+
+
 
 ## 5.6. Build a data pipeline in Azure Synapse Analytics
 
